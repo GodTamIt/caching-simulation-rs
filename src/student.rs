@@ -69,6 +69,7 @@ impl L2 {
     }
 }
 
+/// Initialize cache with the passed in arguments
 pub fn init(c1: u64, c2: u64, b: u64, s: u64) -> (Config, L1, L2) {
     let config = Config {
         C1: c1,
@@ -85,8 +86,13 @@ pub fn init(c1: u64, c2: u64, b: u64, s: u64) -> (Config, L1, L2) {
 }
 
 pub fn cache_access(access_type: AccessType, address: u64, config: &mut Config, l1: &mut L1, l2: &mut L2, stats: &mut Stats) {
+    // Check that cache_clock hasn't hit its limit yet and increment the cache_clock before each access
+    if config.cache_clock == u64::max_value() {
+        panic!("The cache clock has hit the unsigned 64-bit integer max value and will overflow!");
+    }
     config.cache_clock += 1;
 
+    // Update cache-wide stats
     stats.accesses += 1;
     match access_type {
         AccessType::Read => stats.reads += 1,
@@ -122,6 +128,7 @@ pub fn cache_access(access_type: AccessType, address: u64, config: &mut Config, 
         Some((l2_set_index, _, l2_index)) => {
             l2.cache[l2_index as usize][l2_set_index].last_clock_access = config.cache_clock;
             
+            // Bring block into L1 cache as well
             allocate_l1_block(l1, l2, l1_index, &config);
             update_block(&mut l1.cache[l1_index as usize], l1_tag, true, access_type == AccessType::Write, config.cache_clock);
 
@@ -167,7 +174,9 @@ pub fn cache_access(access_type: AccessType, address: u64, config: &mut Config, 
         update_block(l2_victim, l2_tag, true, access_type == AccessType::Write, config.cache_clock);
     }
 
+    // Bring block in L1 cache
     allocate_l1_block(l1, l2, l1_index, config);
+    // Note: L1 is not dirty because L2 should be dirty
     update_block(&mut l1.cache[l1_index as usize], l1_tag, true, false, config.cache_clock);
 }
 
@@ -227,6 +236,7 @@ fn update_block(block: &mut CacheBlock, tag: u64, valid: bool, dirty: bool, last
     block.last_clock_access = last_clock_access;
 }
 
+/// Perform any final calculations before the statistics are outputted by the driver.
 pub fn finish(stats: &mut Stats) {
     stats.read_misses = stats.l1_read_misses + stats.l2_read_misses;
     stats.write_misses = stats.l1_write_misses + stats.l2_write_misses;
