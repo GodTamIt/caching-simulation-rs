@@ -32,26 +32,29 @@ fn main() {
                         .default_value(blocks_per_set_str))
                     .get_matches();
 
-    let l1_size = value_t!(matches.value_of("l1-size"), u32).unwrap_or_else(|e| e.exit());
-    let l2_size = value_t!(matches.value_of("l2-size"), u32).unwrap_or_else(|e| e.exit());
-    let block_size = value_t!(matches.value_of("block-size"), u32).unwrap_or_else(|e| e.exit());
-    let blocks_per_set = value_t!(matches.value_of("blocks-per-set"), u32).unwrap_or_else(|e| e.exit());
+    let l1_size = value_t!(matches.value_of("l1-size"), u64).unwrap_or_else(|e| e.exit());
+    let l2_size = value_t!(matches.value_of("l2-size"), u64).unwrap_or_else(|e| e.exit());
+    let block_size = value_t!(matches.value_of("block-size"), u64).unwrap_or_else(|e| e.exit());
+    let blocks_per_set = value_t!(matches.value_of("blocks-per-set"), u64).unwrap_or_else(|e| e.exit());
 
     println!("Cache Settings");
     println!("C1: {}", l1_size);
     println!("C2: {}", l2_size);
     println!("B: {}", block_size);
     println!("S: {}", blocks_per_set);
+    println!();
 
     let mut stats = defs::Stats::new();
-    student::init(l1_size, l2_size, block_size, blocks_per_set);
+    let (mut config, mut l1, mut l2) = student::init(l1_size, l2_size, block_size, blocks_per_set);
     
-    read_stdin(&mut stats);
+    simulate_accesses_stdin(&mut config, &mut l1, &mut l2, &mut stats);
     
     student::finish(&mut stats);
+
+    println!("{}", stats);
 }
 
-fn read_stdin(stats: &mut defs::Stats) {
+fn simulate_accesses_stdin(config: &mut student::Config, l1: &mut student::L1, l2: &mut student::L2, stats: &mut defs::Stats) {
     let mut access_type: defs::AccessType;
     let mut address: u64;
     let stdin = io::stdin();
@@ -77,6 +80,6 @@ fn read_stdin(stats: &mut defs::Stats) {
             _ => continue,
         }
 
-        student::cache_access(access_type, address, stats);
+        student::cache_access(access_type, address, config, l1, l2, stats);
     }
 }
