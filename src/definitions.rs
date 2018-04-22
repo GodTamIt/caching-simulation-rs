@@ -66,35 +66,35 @@ impl Stats {
 
 impl fmt::Display for Stats {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        writeln!(f, "Cache Statistics").unwrap();
-        writeln!(f, "Accesses: {}", self.accesses).unwrap();
-        writeln!(f, "Reads: {}", self.reads).unwrap();
-        writeln!(f, "Read misses: {}", self.read_misses).unwrap();
-        writeln!(f, "Writes: {}", self.writes).unwrap();
-        writeln!(f, "Write misses: {}", self.write_misses).unwrap();
-        writeln!(f, "Misses: {}", self.misses).unwrap();
-        writeln!(f, "Writebacks: {}", self.write_backs).unwrap();
+        writeln!(f, "Cache Statistics")?;
+        writeln!(f, "Accesses: {}", self.accesses)?;
+        writeln!(f, "Reads: {}", self.reads)?;
+        writeln!(f, "Read misses: {}", self.read_misses)?;
+        writeln!(f, "Writes: {}", self.writes)?;
+        writeln!(f, "Write misses: {}", self.write_misses)?;
+        writeln!(f, "Misses: {}", self.misses)?;
+        writeln!(f, "Writebacks: {}", self.write_backs)?;
         
         // L1 misses
-        writeln!(f, "L1 read misses: {}", self.l1_read_misses).unwrap();
-        writeln!(f, "L1 write misses: {}", self.l1_write_misses).unwrap();
+        writeln!(f, "L1 read misses: {}", self.l1_read_misses)?;
+        writeln!(f, "L1 write misses: {}", self.l1_write_misses)?;
 
         // L2 misses
-        writeln!(f, "L2 read misses: {}", self.l2_read_misses).unwrap();
-        writeln!(f, "L2 write misses: {}", self.l2_write_misses).unwrap();
+        writeln!(f, "L2 read misses: {}", self.l2_read_misses)?;
+        writeln!(f, "L2 write misses: {}", self.l2_write_misses)?;
 
         // Access times
-        writeln!(f, "L1 access time: {}", self.l1_access_time).unwrap();
-        writeln!(f, "L2 access time: {}", self.l2_access_time).unwrap();
-        writeln!(f, "Memory access time: {}", self.memory_access_time).unwrap();
+        writeln!(f, "L1 access time: {}", self.l1_access_time)?;
+        writeln!(f, "L2 access time: {}", self.l2_access_time)?;
+        writeln!(f, "Memory access time: {}", self.memory_access_time)?;
 
         // Miss rates
-        writeln!(f, "L1 Miss rate: {}", self.l1_miss_rate).unwrap();
-        writeln!(f, "L2 Miss rate: {}", self.l2_miss_rate).unwrap();
-        writeln!(f, "Miss rate: {}", self.miss_rate).unwrap();
+        writeln!(f, "L1 Miss rate: {}", self.l1_miss_rate)?;
+        writeln!(f, "L2 Miss rate: {}", self.l2_miss_rate)?;
+        writeln!(f, "Miss rate: {}", self.miss_rate)?;
 
         // Average access times
-        writeln!(f, "L2 average access time: {}", self.l2_avg_access_time).unwrap();
+        writeln!(f, "L2 average access time: {}", self.l2_avg_access_time)?;
         write!(f, "Average access time (AAT): {}", self.avg_access_time)
     }
 }
